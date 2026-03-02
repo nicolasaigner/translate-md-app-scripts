@@ -1,10 +1,12 @@
 # translate-md-app-scripts
 
-> Traduz arquivos `.md` em lote (pastas e subpastas) de inglês para PT-BR usando **Google Apps Script** como backend de tradução — **100% gratuito**, sem cartão de crédito e sem risco de bloqueio de IP.
+> Traduz arquivos `.md` em lote (pastas e subpastas) de inglês para PT-BR usando **Google Apps Script** como backend de tradução — **100% gratuito**, sem cartão de crédito e sem risco de bloqueio de
+> IP.
 
 ## Como funciona
 
-O Google Apps Script tem acesso nativo ao motor do Google Tradutor via `LanguageApp`. Este projeto expõe isso como um Web App (endpoint REST), e o script Node.js local chama esse endpoint para traduzir cada arquivo Markdown encontrado recursivamente a partir de uma pasta.
+O Google Apps Script tem acesso nativo ao motor do Google Tradutor via `LanguageApp`. Este projeto expõe isso como um Web App (endpoint REST), e o script Node.js local chama esse endpoint para
+traduzir cada arquivo Markdown encontrado recursivamente a partir de uma pasta.
 
 ```
 [Script Node.js local]
@@ -22,6 +24,7 @@ O Google Apps Script tem acesso nativo ao motor do Google Tradutor via `Language
 ```
 
 **Características:**
+
 - Varredura recursiva em subpastas
 - Blocos de código (` ``` `) são preservados sem tradução
 - Arquivos grandes são divididos em chunks de até 4.500 caracteres automaticamente
@@ -75,10 +78,10 @@ O arquivo de manifesto do projeto precisa estar configurado corretamente. No edi
 2. Em "Selecione o tipo", escolha **App da Web**
 3. Configure conforme abaixo:
 
-| Campo | Valor obrigatório |
-|---|---|
-| **Executar como** | **Eu (seu-email@gmail.com)** |
-| **Quem pode acessar** | **Qualquer pessoa** *(sem "com uma Conta do Google")* |
+| Campo                 | Valor obrigatório                                     |
+| --------------------- | ----------------------------------------------------- |
+| **Executar como**     | **Eu (seu-email@gmail.com)**                          |
+| **Quem pode acessar** | **Qualquer pessoa** _(sem "com uma Conta do Google")_ |
 
 > ⚠️ Se você escolher "Usuário com acesso ao app" ou "Qualquer pessoa com uma Conta do Google", o script local receberá erro **401**.
 
@@ -163,12 +166,17 @@ Para cada arquivo `nome.md` encontrado, será gerado um `nome_pt.md` na mesma pa
 ## Notas técnicas
 
 ### Proteção de blocos de código
-Antes de enviar para tradução, o script substitui blocos ` ``` ... ``` ` por tokens temporários (`___CODE_BLOCK_0___`, etc.) e os restaura depois. Isso garante que código-fonte não seja "traduzido" pelo Google.
+
+Antes de enviar para tradução, o script substitui blocos ` ``` ... ``` ` por tokens temporários (`___CODE_BLOCK_0___`, etc.) e os restaura depois. Isso garante que código-fonte não seja "traduzido"
+pelo Google.
 
 ### Chunking automático
-O `LanguageApp.translate()` do Google tem um limite de ~5.000 caracteres por chamada. O script divide automaticamente textos maiores em chunks por parágrafos (`\n\n`) ou por linhas, traduz cada parte separadamente com 1s de delay entre elas, e depois junta tudo.
+
+O `LanguageApp.translate()` do Google tem um limite de ~5.000 caracteres por chamada. O script divide automaticamente textos maiores em chunks por parágrafos (`\n\n`) ou por linhas, traduz cada parte
+separadamente com 1s de delay entre elas, e depois junta tudo.
 
 ### Rate limit
+
 O GAS tem cotas diárias generosas para uso pessoal (~20.000 chamadas/dia para contas comuns). O delay de 1,5s entre arquivos e 1s entre chunks é suficiente para evitar erros de cota em uso normal.
 
 ---
@@ -176,7 +184,8 @@ O GAS tem cotas diárias generosas para uso pessoal (~20.000 chamadas/dia para c
 ## Limitações conhecidas
 
 - Sintaxes complexas de Markdown (tabelas com HTML embutido, JSX, etc.) podem ter formatação levemente alterada pela tradução
-- O script não protege inline code (`` `código` ``) — apenas blocos cercados por ` ``` `. Se necessário, uma abordagem baseada em AST com [Remark](https://github.com/remarkjs/remark) seria mais robusta
+- O script não protege inline code (`` `código` ``) — apenas blocos cercados por ` ``` `. Se necessário, uma abordagem baseada em AST com [Remark](https://github.com/remarkjs/remark) seria mais
+  robusta
 - A URL do Web App fica acessível publicamente (quem tiver a URL pode usar a cota da sua conta Google). Não compartilhe a URL publicamente
 
 ---

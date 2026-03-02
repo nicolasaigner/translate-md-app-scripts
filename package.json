@@ -9,7 +9,14 @@
     "build": "tsc",
     "dev": "tsc --watch"
   },
-  "keywords": [],
+  "keywords": [
+    "translate",
+    "markdown",
+    "google-apps-script",
+    "typescript",
+    "free",
+    "open-source"
+  ],
   "author": "Nícolas Aigner",
   "license": "MIT",
   "type": "module",
