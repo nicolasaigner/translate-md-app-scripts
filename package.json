@@ -1,0 +1,23 @@
+{
+  "name": "translate-md-app-scripts",
+  "version": "1.0.0",
+  "description": "Tradução de arquivos em Markdown usando Google Apps Script",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --experimental-strip-types src/index.ts",
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [],
+  "author": "Nícolas Aigner",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "typescript": "^5.9.3"
+  }
+}

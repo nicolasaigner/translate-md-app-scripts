@@ -1,0 +1,15 @@
+# Ignore node_modules, build artifacts, and temporary files
+*temp
+node_modules
+dist
+build
+*.log
+
+# Ignore TypeScript output files
+*.js
+*.d.ts
+*.js.map
+
+# Ignore environment variable files
+.env
+.env.local
