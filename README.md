@@ -1,12 +1,10 @@
 # translate-md-app-scripts
 
-> Traduz arquivos `.md` em lote (pastas e subpastas) de inglês para PT-BR usando **Google Apps Script** como backend de tradução — **100% gratuito**, sem cartão de crédito e sem risco de bloqueio de
-> IP.
+> Traduz arquivos `.md` em lote (pastas e subpastas) de inglês para PT-BR usando **Google Apps Script** como backend de tradução — **100% gratuito**, sem cartão de crédito e sem risco de bloqueio de IP.
 
 ## Como funciona
 
-O Google Apps Script tem acesso nativo ao motor do Google Tradutor via `LanguageApp`. Este projeto expõe isso como um Web App (endpoint REST), e o script Node.js local chama esse endpoint para
-traduzir cada arquivo Markdown encontrado recursivamente a partir de uma pasta.
+O Google Apps Script tem acesso nativo ao motor do Google Tradutor via `LanguageApp`. Este projeto expõe isso como um Web App (endpoint REST), e o script Node.js local chama esse endpoint para traduzir cada arquivo Markdown encontrado recursivamente a partir de uma pasta.
 
 ```
 [Script Node.js local]
@@ -86,7 +84,7 @@ O arquivo de manifesto do projeto precisa estar configurado corretamente. No edi
 > ⚠️ Se você escolher "Usuário com acesso ao app" ou "Qualquer pessoa com uma Conta do Google", o script local receberá erro **401**.
 
 4. Clique em **Implantar**, autorize as permissões quando solicitado
-5. Copie a **URL do Web App** gerada (formato: `https://script.google.com/macros/s/.../exec`)
+5. Copie a **URL do Web App** gerada (formato: `https://script.google.com/macros/s/SEU_CODIGO_AQUI/exec`)
 
 **Exemplo de como deve ficar após a implantação:**
 
@@ -101,7 +99,7 @@ O arquivo de manifesto do projeto precisa estar configurado corretamente. No edi
 ### 2.1 Clonar e instalar dependências
 
 ```bash
-git clone https://github.com/seu-usuario/translate-md-app-scripts.git
+git clone https://github.com/nicolasaigner/translate-md-app-scripts.git
 cd translate-md-app-scripts
 npm install
 ```
@@ -167,13 +165,11 @@ Para cada arquivo `nome.md` encontrado, será gerado um `nome_pt.md` na mesma pa
 
 ### Proteção de blocos de código
 
-Antes de enviar para tradução, o script substitui blocos ` ``` ... ``` ` por tokens temporários (`___CODE_BLOCK_0___`, etc.) e os restaura depois. Isso garante que código-fonte não seja "traduzido"
-pelo Google.
+Antes de enviar para tradução, o script substitui blocos ` ``` ... ``` ` por tokens temporários (`___CODE_BLOCK_0___`, etc.) e os restaura depois. Isso garante que código-fonte não seja "traduzido" pelo Google.
 
 ### Chunking automático
 
-O `LanguageApp.translate()` do Google tem um limite de ~5.000 caracteres por chamada. O script divide automaticamente textos maiores em chunks por parágrafos (`\n\n`) ou por linhas, traduz cada parte
-separadamente com 1s de delay entre elas, e depois junta tudo.
+O `LanguageApp.translate()` do Google tem um limite de ~5.000 caracteres por chamada. O script divide automaticamente textos maiores em chunks por parágrafos (`\n\n`) ou por linhas, traduz cada parte separadamente com 1s de delay entre elas, e depois junta tudo.
 
 ### Rate limit
 
@@ -183,10 +179,61 @@ O GAS tem cotas diárias generosas para uso pessoal (~20.000 chamadas/dia para c
 
 ## Limitações conhecidas
 
-- Sintaxes complexas de Markdown (tabelas com HTML embutido, JSX, etc.) podem ter formatação levemente alterada pela tradução
-- O script não protege inline code (`` `código` ``) — apenas blocos cercados por ` ``` `. Se necessário, uma abordagem baseada em AST com [Remark](https://github.com/remarkjs/remark) seria mais
-  robusta
-- A URL do Web App fica acessível publicamente (quem tiver a URL pode usar a cota da sua conta Google). Não compartilhe a URL publicamente
+- Sintaxes complexas de Markdown (tabelas com HTML embutido, JSX, etc.) podem ter formatação levemente alterada pela tradução;
+- O script não protege inline code (`` `código` ``) — apenas blocos cercados por ` ``` `;
+- Se necessário, uma abordagem baseada em AST com [Remark](https://github.com/remarkjs/remark) seria mais robusta;
+- A URL do Web App fica acessível publicamente (quem tiver a URL pode usar a cota da sua conta Google). Não compartilhe a URL publicamente;
+
+---
+
+## Dicas de pós-tradução
+
+### Corrigindo formatação de tabelas
+
+O tradutor pode inserir quebras de linha ou espaços extras dentro de tabelas Markdown, quebrando a formatação. Após a tradução, revise os arquivos — principalmente os que contêm tabelas.
+
+Uma forma rápida de localizar os problemas é buscar no VS Code (Ctrl+Shift+H) por:
+
+```
+ |
+
+|
+```
+
+E substituir por:
+
+```
+ |
+|
+```
+
+Ou use os scripts abaixo para corrigir automaticamente via terminal:
+
+**PowerShell 7.5 — arquivo individual:**
+
+```powershell
+(Get-Content "caminho\para\seu\arquivo.md") -replace '(\|[^\n]*\|)(\s*\n\s*)(\|[^\n]*\|)', '$1`n$3' | Set-Content "caminho\para\seu\arquivo.md"
+```
+
+**PowerShell 7.5 — todos os arquivos recursivamente:**
+
+```powershell
+Get-ChildItem -Path "caminho\para\seus\arquivos\*.md" -Recurse | ForEach-Object {
+    (Get-Content $_.FullName) -replace '(\|[^\n]*\|)(\s*\n\s*)(\|[^\n]*\|)', '$1`n$3' | Set-Content $_.FullName
+}
+```
+
+**Linux/macOS — arquivo individual:**
+
+```bash
+sed -i ':a;N;$!ba;s/\(\|[^\n]*\|\)\s*\n\s*\(\|[^\n]*\|\)/\1\n\2/g' caminho/para/seu/arquivo.md
+```
+
+**Linux/macOS — todos os arquivos recursivamente:**
+
+```bash
+find caminho/para/seus/arquivos -type f -name "*.md" -exec sed -i ':a;N;$!ba;s/\(\|[^\n]*\|\)\s*\n\s*\(\|[^\n]*\|\)/\1\n\2/g' {} +
+```
 
 ---
 
