@@ -1,15 +1,21 @@
-# Ignore node_modules, build artifacts, and temporary files
-*temp
-node_modules
-dist
-build
+# Dependências e artefatos de build
+node_modules/
+dist/
+build/
 *.log
 
-# Ignore TypeScript output files
+# Arquivos de saída do TypeScript
 *.js
 *.d.ts
 *.js.map
 
-# Ignore environment variable files
+# Variáveis de ambiente (contém a URL privada do GAS)
 .env
 .env.local
+
+# Pasta com os arquivos Markdown a traduzir e suas saídas
+# (não versionada — cada usuário usa a própria pasta de arquivos)
+markdown-files/
+
+# Pasta temporária de rascunhos
+temp/
